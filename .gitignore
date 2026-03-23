@@ -1,0 +1,18 @@
+# Compiled Java Class Files
+*.class
+
+# NetBeans specific
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+
+# Package Files
+*.jar
+*.war
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db

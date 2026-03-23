@@ -1,0 +1,342 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office'
+xmlns:w='urn:schemas-microsoft-com:office:word'
+xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="UTF-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word 15">
+<meta name="Originator" content="Microsoft Word 15">
+<style>
+    body {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 12pt;
+        line-height: 1.5;
+        margin: 1in;
+        color: #000;
+    }
+    h1 {
+        font-size: 18pt;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 24pt;
+        margin-bottom: 6pt;
+        color: #000;
+    }
+    h2 {
+        font-size: 14pt;
+        font-weight: bold;
+        margin-top: 18pt;
+        margin-bottom: 6pt;
+        color: #000;
+    }
+    h3 {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 12pt;
+        margin-bottom: 6pt;
+        color: #000;
+    }
+    p {
+        margin-top: 0;
+        margin-bottom: 6pt;
+        text-align: justify;
+    }
+    .center {
+        text-align: center;
+    }
+    .cover-info {
+        text-align: center;
+        margin-top: 12pt;
+        font-size: 12pt;
+    }
+    pre {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 9pt;
+        background-color: #f4f4f4;
+        border: 1px solid #ccc;
+        padding: 8pt;
+        margin: 6pt 0;
+        white-space: pre-wrap;
+    }
+    code {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 10pt;
+        background-color: #f0f0f0;
+        padding: 1pt 3pt;
+    }
+    ul {
+        margin-top: 0;
+        margin-bottom: 6pt;
+    }
+    li {
+        margin-bottom: 3pt;
+    }
+    hr {
+        border: none;
+        border-top: 1px solid #999;
+        margin: 18pt 0;
+    }
+    .page-break {
+        page-break-before: always;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 6pt 0;
+    }
+    th, td {
+        border: 1px solid #000;
+        padding: 6pt;
+        text-align: left;
+        font-size: 11pt;
+    }
+    th {
+        background-color: #d9d9d9;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<br><br><br><br><br>
+<h1>Asia Pacific Airport Simulation</h1>
+<p class="center" style="font-size:14pt;"><b>Individual Assignment Report</b></p>
+<br>
+<p class="center" style="font-size:13pt;">CT074-3-2 Concurrent Programming</p>
+<br><br>
+<div class="cover-info">
+    <p><b>Name:</b> Yamen Mohammed Elbadawi</p>
+    <p><b>TP Number:</b> TP084860</p>
+    <br>
+    <p><b>Module:</b> Concurrent Programming (CT074-3-2)</p>
+    <p><b>Level:</b> 2</p>
+    <p><b>Institution:</b> Asia Pacific University of Technology &amp; Innovation</p>
+    <p><b>Date:</b> March 2026</p>
+</div>
+
+<br><br><br><br><br><br><br><br><br>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page-break"></div>
+<h1>Table of Contents</h1>
+<p>1. Introduction and Background .................................................. 3</p>
+<p>2. Explanation of Safety Aspects of the Multi-Threaded System .... 4</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;2.1 Race Conditions ................................................................ 4</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;2.2 Mutual Exclusion .............................................................. 4</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;2.3 Deadlock Prevention ......................................................... 5</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;2.4 Thread Starvation ............................................................. 5</p>
+<p>3. Justification of Coding Techniques Implemented .................... 5</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;3.1 Thread per Plane ............................................................... 5</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;3.2 Producer-Consumer Pattern for ATC ................................ 6</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;3.3 Synchronized Methods for Shared Resources .................. 6</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;3.4 Thread.join() for Barrier Synchronization ........................ 7</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;3.5 Emergency Priority Handling ............................................ 7</p>
+<p>4. Discussion of Concurrency Concepts ....................................... 7</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;4.1 Threads and Concurrency .................................................. 7</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;4.2 Synchronization ............................................................... 8</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;4.3 Thread Safety .................................................................. 8</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;4.4 Critical Sections ............................................................... 8</p>
+<p>5. Requirements Fulfilled ............................................................ 9</p>
+<p>6. References ............................................................................... 9</p>
+
+<!-- SECTION 1 -->
+<div class="page-break"></div>
+<h1>1. Introduction and Background</h1>
+
+<p>This report documents the development of a concurrent airport simulation system built using Java. The simulation models the operations of Asia Pacific Airport, where six planes attempt to land, perform ground operations, and depart using a single shared runway, three gates, and one refueling truck.</p>
+
+<p>The main goal of this assignment is to apply concurrent programming concepts to simulate real-world airport operations. In a real airport, many things happen at the same time &mdash; multiple planes are being serviced at different gates, passengers are boarding and disembarking, and ground crews are cleaning and refueling aircraft simultaneously. This makes it a suitable scenario for concurrent programming, where multiple threads run in parallel and need to coordinate with each other to avoid conflicts.</p>
+
+<p>The system is implemented entirely in Java using basic threading facilities such as <code>Thread</code>, <code>synchronized</code>, <code>wait()</code>, <code>notify()</code>, and <code>Thread.join()</code>. No restricted libraries like <code>ExecutorService</code>, <code>ForkJoinPool</code>, or <code>CompletableFuture</code> were used. The simulation runs within 60 seconds and handles both basic and additional requirements including emergency landings and a shared refueling truck.</p>
+
+<p><b>Assumptions:</b></p>
+<ul>
+    <li>Each plane carries between 10 to 50 passengers (randomly generated).</li>
+    <li>Passengers are always ready at the terminal to board or disembark.</li>
+    <li>Plane 6 is designated as the emergency plane with a fuel shortage.</li>
+    <li>A plane must have a gate assigned before it can land (no ground waiting area).</li>
+    <li>The runway can only be used by one plane at a time (for landing or takeoff).</li>
+    <li>Gate operations (passenger handling, cleaning, refueling) happen concurrently at each gate.</li>
+    <li>If landing is denied, the plane circles in the air and retries after a short delay.</li>
+</ul>
+
+<!-- SECTION 2 -->
+<h1>2. Explanation of Safety Aspects of the Multi-Threaded System</h1>
+
+<h2>2.1 Race Conditions</h2>
+
+<p>A race condition happens when two or more threads try to access and modify the same shared data at the same time, leading to unpredictable results. In our simulation, several shared resources could be affected by race conditions:</p>
+
+<ul>
+    <li><b>Runway:</b> Multiple planes could try to land or take off at the same time, but only one can use the runway.</li>
+    <li><b>Gates:</b> Two planes could be assigned the same gate if the gate status is checked simultaneously by different threads.</li>
+    <li><b>Refueling Truck:</b> Only one truck exists, so two planes should not refuel at the same time.</li>
+</ul>
+
+<p>To prevent race conditions, we use the <code>synchronized</code> keyword on methods and blocks that access shared resources. For example, the ATC's <code>handleLanding()</code> and <code>handleTakeoff()</code> methods are synchronized so that only one request is processed at a time, preventing two planes from being assigned the same gate or runway simultaneously.</p>
+
+<h2>2.2 Mutual Exclusion</h2>
+
+<p>Mutual exclusion ensures that only one thread can access a critical section at a time. In our simulation:</p>
+
+<ul>
+    <li>The <b>runway</b> is protected by a boolean flag <code>runwayFree</code> inside the ATC class, which is only modified within <code>synchronized</code> blocks. This ensures that only one plane can land or take off at any given time.</li>
+    <li>The <b>refueling truck</b> uses a <code>synchronized</code> method with <code>wait()</code> and <code>notifyAll()</code> so that only one plane can refuel at a time. Other planes wait until the truck is free.</li>
+    <li>The <b>print method</b> is synchronized to prevent garbled output when multiple threads try to print at the same time.</li>
+</ul>
+
+<pre>
+// RefuelingTruck - mutual exclusion example
+public synchronized void refuel(String planeName) throws InterruptedException {
+    while (isBusy) {
+        wait(); // wait until truck is free
+    }
+    isBusy = true;
+    // ... refueling happens ...
+    isBusy = false;
+    notifyAll(); // tell other planes the truck is free
+}
+</pre>
+
+<h2>2.3 Deadlock Prevention</h2>
+
+<p>Deadlock occurs when two or more threads are waiting for each other to release resources, and none of them can proceed. In our design, we avoided deadlock by:</p>
+
+<ul>
+    <li>Using a <b>single lock ordering</b> &mdash; the ATC thread is the only one that makes decisions about runway and gate assignments. Plane threads submit requests and wait for responses, rather than trying to acquire multiple locks themselves.</li>
+    <li>Using <b>timeouts</b> on <code>wait()</code> calls (e.g., <code>requests.wait(300)</code>) so the ATC thread periodically checks for new requests even without being explicitly notified.</li>
+    <li>Keeping synchronized blocks as <b>short as possible</b> to minimize the time locks are held.</li>
+</ul>
+
+<h2>2.4 Thread Starvation</h2>
+
+<p>Thread starvation happens when a thread never gets a chance to execute because other threads keep getting priority. In our simulation, we handle this by:</p>
+
+<ul>
+    <li>Processing requests in <b>FIFO order</b> (first come, first served) from the request queue.</li>
+    <li>Emergency planes get <b>priority</b> in the queue, but regular planes are still served eventually as other planes depart and free up resources.</li>
+</ul>
+
+<!-- SECTION 3 -->
+<div class="page-break"></div>
+<h1>3. Justification of Coding Techniques Implemented</h1>
+
+<h2>3.1 Thread per Plane</h2>
+
+<p>Each plane is implemented as a separate thread by extending the <code>Thread</code> class. This is a straightforward approach that makes it easy to simulate each plane operating independently. Each plane thread handles its own lifecycle &mdash; from requesting landing to departing. The thread is named <code>"Plane-X"</code> to ensure correct thread attribution in the output.</p>
+
+<pre>
+public class Plane extends Thread {
+    public Plane(int id, ...) {
+        super("Plane-" + id); // set thread name
+    }
+    public void run() {
+        // request landing, land, do gate ops, take off
+    }
+}
+</pre>
+
+<h2>3.2 Producer-Consumer Pattern for ATC</h2>
+
+<p>The ATC (Air Traffic Controller) runs as its own thread and uses a request queue to receive requests from plane threads. This is the <b>producer-consumer pattern</b> &mdash; planes produce requests, and the ATC consumes and processes them. This design ensures that ATC messages are printed from the ATC thread, which is important for correct thread attribution in the output.</p>
+
+<pre>
+// Plane sends request and waits
+PlaneRequest req = new PlaneRequest(plane, type);
+synchronized (requests) {
+    requests.add(req);
+    requests.notifyAll(); // wake up ATC
+}
+synchronized (req) {
+    while (!req.processed) {
+        req.wait(); // plane waits here
+    }
+}
+</pre>
+
+<h2>3.3 Synchronized Methods for Shared Resources</h2>
+
+<p>The <code>RefuelingTruck</code> class uses a <code>synchronized</code> method with <code>wait()</code>/<code>notifyAll()</code> to ensure only one plane refuels at a time. This is a classic example of <b>condition synchronization</b> &mdash; a plane waits if the truck is busy, and is notified when the truck becomes available.</p>
+
+<h2>3.4 Thread.join() for Barrier Synchronization</h2>
+
+<p>At each gate, three operations happen concurrently: passenger handling, cleaning, and refueling. We create three sub-threads for these operations and use <code>Thread.join()</code> to wait for all three to finish before the plane can undock. This acts as a <b>barrier</b> &mdash; the plane cannot proceed until all gate operations are complete.</p>
+
+<pre>
+// start all 3 operations concurrently
+t1.start(); t2.start(); t3.start();
+
+// wait for all 3 to finish (barrier)
+t1.join(); t2.join(); t3.join();
+</pre>
+
+<h2>3.5 Emergency Priority Handling</h2>
+
+<p>For the additional requirement, the ATC checks the request queue for emergency planes first before processing regular requests. This is done using an iterator that scans the queue for emergency landing requests and processes them with higher priority, ensuring that a plane with fuel shortage gets to land before other waiting planes.</p>
+
+<!-- SECTION 4 -->
+<h1>4. Discussion of Concurrency Concepts</h1>
+
+<h2>4.1 Threads and Concurrency</h2>
+
+<p>The simulation uses multiple threads running concurrently. Each plane is a thread, the ATC is a thread, and gate operations spawn sub-threads. This allows multiple planes to be serviced at different gates at the same time, which is the core concept of concurrency &mdash; multiple tasks making progress simultaneously.</p>
+
+<h2>4.2 Synchronization with synchronized and wait/notify</h2>
+
+<p>The <code>synchronized</code> keyword is used throughout the code to protect shared resources. When a thread enters a <code>synchronized</code> method or block, it acquires a lock on the object, preventing other threads from entering any other <code>synchronized</code> block on the same object. The <code>wait()</code> method makes a thread release the lock and wait until another thread calls <code>notify()</code> or <code>notifyAll()</code> on the same object. This is used for ATC request processing, refueling truck access, and waking up the ATC thread when new requests arrive.</p>
+
+<h2>4.3 Thread Safety</h2>
+
+<p>Thread safety means that shared data is accessed correctly by multiple threads without causing data corruption. In our simulation, we ensure thread safety by using <code>synchronized</code> blocks when reading or writing shared variables like <code>runwayFree</code>, <code>planesOnGround</code>, and gate occupancy. We also use a synchronized print method so that output lines from different threads do not get mixed together.</p>
+
+<h2>4.4 Critical Sections</h2>
+
+<p>A critical section is a part of the code that accesses shared resources and must not be executed by more than one thread at a time. In our simulation, the main critical sections are:</p>
+
+<ul>
+    <li>The ATC's <code>handleLanding()</code> and <code>handleTakeoff()</code> methods, which modify runway status, gate assignments, and plane count.</li>
+    <li>The refueling truck's <code>refuel()</code> method, which controls access to the single shared truck.</li>
+    <li>The gate's <code>assignPlane()</code> and <code>freegate()</code> methods, which modify gate occupancy status.</li>
+</ul>
+
+<!-- SECTION 5 -->
+<div class="page-break"></div>
+<h1>5. Requirements Fulfilled</h1>
+
+<h2>5.1 Basic Requirements Met</h2>
+
+<table>
+    <tr><th>Requirement</th><th>Status</th></tr>
+    <tr><td>Single runway for landing and departure</td><td>Fulfilled</td></tr>
+    <tr><td>Maximum 3 planes on airport grounds</td><td>Fulfilled</td></tr>
+    <tr><td>3 gates for plane operations</td><td>Fulfilled</td></tr>
+    <tr><td>Full plane lifecycle (land &rarr; coast &rarr; dock &rarr; ops &rarr; undock &rarr; takeoff)</td><td>Fulfilled</td></tr>
+    <tr><td>Concurrent gate operations (passengers, cleaning, refueling)</td><td>Fulfilled</td></tr>
+    <tr><td>Statistics report with sanity checks and waiting times</td><td>Fulfilled</td></tr>
+    <tr><td>Simulation completes within 60 seconds</td><td>Fulfilled</td></tr>
+    <tr><td>Correct thread attribution in output</td><td>Fulfilled</td></tr>
+</table>
+
+<h2>5.2 Additional Requirements Met</h2>
+
+<table>
+    <tr><th>Requirement</th><th>Status</th></tr>
+    <tr><td>Single refueling truck shared across all gates (mutual exclusion)</td><td>Fulfilled</td></tr>
+    <tr><td>Emergency landing scenario with fuel shortage (priority handling)</td><td>Fulfilled</td></tr>
+    <tr><td>Congested scenario (planes denied when airport full)</td><td>Fulfilled</td></tr>
+</table>
+
+<h2>5.3 Requirements NOT Met</h2>
+
+<p><b>ALL Requirements were Fulfilled.</b></p>
+
+<!-- SECTION 6 -->
+<h1>6. References</h1>
+
+<p>1. Goetz, B. et al. (2006). <i>Java Concurrency in Practice</i>. Addison-Wesley.</p>
+<p>2. Oracle. (2024). <i>Java SE Documentation - Concurrency</i>. Available at: https://docs.oracle.com/javase/tutorial/essential/concurrency/</p>
+<p>3. Silberschatz, A., Galvin, P. B., &amp; Gagne, G. (2018). <i>Operating System Concepts</i> (10th ed.). Wiley.</p>
+
+</body>
+</html>
